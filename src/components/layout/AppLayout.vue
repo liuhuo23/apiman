@@ -27,20 +27,28 @@
     <div class="app-body">
       <div class="sidebar">
         <div class="sidebar-header">
-          <span>项目列表</span>
+          <span class="app-logo">API</span>
+          <span class="app-name">Tool</span>
         </div>
-        <div class="project-list">
+        <nav class="menu-nav">
           <div
-            v-for="project in projectStore.projects"
-            :key="project.id"
-            class="project-item"
-            :class="{ active: currentProject?.id === project.id }"
-            @click="selectProject(project)"
+            v-for="menu in menuItems"
+            :key="menu.key"
+            class="menu-item"
+            :class="{ active: currentMenu === menu.key }"
+            :title="menu.label"
+            @click="handleMenuClick(menu)"
           >
-            <span class="project-name">{{ project.name }}</span>
+            <el-icon :size="22">
+              <component :is="menu.icon" />
+            </el-icon>
+            <span class="menu-label">{{ menu.label }}</span>
           </div>
-          <div v-if="projectStore.projects.length === 0" class="empty-tip">
-            暂无项目
+        </nav>
+        <div class="sidebar-footer">
+          <div class="menu-item" title="设置" @click="currentMenu = 'settings'">
+            <el-icon :size="22"><Setting /></el-icon>
+            <span class="menu-label">设置</span>
           </div>
         </div>
       </div>
@@ -48,31 +56,62 @@
       <div class="main-area">
         <div class="content-left">
           <div class="content-header">
-            <span>接口列表</span>
-            <el-button size="small" type="primary" @click="showCreateApi = true" :disabled="!currentProject">新建</el-button>
+            <span>{{ currentMenuLabel }}</span>
+            <el-button size="small" type="primary" @click="handleCreate" :disabled="!currentProject && currentMenu === 'apis'">
+              新建
+            </el-button>
           </div>
           <div class="api-list">
-            <div
-              v-for="api in apiStore.apis"
-              :key="api.id"
-              class="api-item"
-              :class="{ active: currentApi?.id === api.id }"
-              @click="selectApi(api)"
-            >
-              <el-tag :color="getMethodColor(api.method)" size="small">{{ api.method }}</el-tag>
-              <span class="api-name">{{ api.name }}</span>
-            </div>
-            <div v-if="apiStore.apis.length === 0 && currentProject" class="empty-tip">
-              暂无接口
-            </div>
-            <div v-if="!currentProject" class="empty-tip">
-              请先选择项目
-            </div>
+            <template v-if="currentMenu === 'apis'">
+              <div
+                v-for="api in apiStore.apis"
+                :key="api.id"
+                class="api-item"
+                :class="{ active: currentApi?.id === api.id }"
+                @click="selectApi(api)"
+              >
+                <el-tag :color="getMethodColor(api.method)" size="small">{{ api.method }}</el-tag>
+                <span class="api-name">{{ api.name }}</span>
+              </div>
+              <div v-if="apiStore.apis.length === 0 && currentProject" class="empty-tip">
+                暂无接口
+              </div>
+              <div v-if="!currentProject" class="empty-tip">
+                请先选择项目
+              </div>
+            </template>
+            <template v-else-if="currentMenu === 'auto-test'">
+              <div class="empty-tip">自动化测试功能开发中</div>
+            </template>
+            <template v-else-if="currentMenu === 'share'">
+              <div class="empty-tip">分享文档功能开发中</div>
+            </template>
+            <template v-else-if="currentMenu === 'history'">
+              <div class="empty-tip">请求历史功能开发中</div>
+            </template>
+            <template v-else-if="currentMenu === 'settings'">
+              <div class="settings-content">
+                <el-form label-width="100px">
+                  <el-form-item label="主题">
+                    <el-select v-model="theme" placeholder="请选择主题">
+                      <el-option label="浅色" value="light" />
+                      <el-option label="深色" value="dark" />
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="语言">
+                    <el-select v-model="language" placeholder="请选择语言">
+                      <el-option label="中文" value="zh-CN" />
+                      <el-option label="English" value="en-US" />
+                    </el-select>
+                  </el-form-item>
+                </el-form>
+              </div>
+            </template>
           </div>
         </div>
 
         <div class="content-right">
-          <template v-if="currentApi">
+          <template v-if="currentApi && currentMenu === 'apis'">
             <div class="detail-header">
               <div class="detail-title">
                 <el-tag :color="getMethodColor(currentApi.method)">{{ currentApi.method }}</el-tag>
@@ -126,7 +165,7 @@
             </el-tabs>
           </template>
           <div v-else class="empty-detail">
-            <p>选择左侧接口查看详情</p>
+            <p>{{ getEmptyMessage() }}</p>
           </div>
         </div>
       </div>
@@ -203,6 +242,13 @@ import { useProjectStore } from '@/stores/project';
 import { useApiStore } from '@/stores/api';
 import { HTTP_METHODS, METHOD_COLORS, type Project, type Api, type HttpMethod } from '@/types';
 import JsonEditor from '@/components/common/JsonEditor.vue';
+import { 
+  SetUp, 
+  Share, 
+  Clock, 
+  Setting,
+  Connection
+} from '@element-plus/icons-vue';
 
 const projectStore = useProjectStore();
 const apiStore = useApiStore();
@@ -215,6 +261,51 @@ const currentProject = computed(() => projectStore.currentProject);
 const currentApi = computed(() => apiStore.currentApi);
 
 const activeTab = ref('basic');
+const currentMenu = ref('apis');
+
+const theme = ref('light');
+const language = ref('zh-CN');
+
+const menuItems = [
+  { key: 'apis', label: '接口管理', icon: Connection },
+  { key: 'auto-test', label: '自动化测试', icon: SetUp },
+  { key: 'share', label: '分享文档', icon: Share },
+  { key: 'history', label: '请求历史', icon: Clock },
+];
+
+const currentMenuLabel = computed(() => {
+  const item = menuItems.find(m => m.key === currentMenu.value);
+  return item?.label || '接口管理';
+});
+
+function getEmptyMessage() {
+  switch (currentMenu.value) {
+    case 'apis':
+      return '选择左侧接口查看详情';
+    case 'auto-test':
+      return '自动化测试功能开发中';
+    case 'share':
+      return '分享文档功能开发中';
+    case 'history':
+      return '请求历史功能开发中';
+    case 'settings':
+      return '';
+    default:
+      return '';
+  }
+}
+
+function handleMenuClick(menu: { key: string; label: string }) {
+  currentMenu.value = menu.key;
+  apiStore.setCurrentApi(null);
+  activeTab.value = 'basic';
+}
+
+function handleCreate() {
+  if (currentMenu.value === 'apis') {
+    showCreateApi.value = true;
+  }
+}
 
 const showCreateProject = ref(false);
 const newProjectName = ref('');
@@ -247,6 +338,7 @@ async function selectProject(project: Project) {
   await apiStore.fetchApis(project.id);
   apiStore.setCurrentApi(null);
   activeTab.value = 'basic';
+  currentMenu.value = 'apis';
 }
 
 async function closeProject(id: number) {
@@ -498,42 +590,74 @@ async function handleMaximize() {
 }
 
 .sidebar {
-  width: 200px;
-  background: #fff;
-  border-right: 1px solid #e6e6e6;
+  width: 72px;
+  background: #1e1e1e;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
 }
 
 .sidebar-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e6e6e6;
-  font-weight: 500;
-  font-size: 14px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-bottom: 1px solid #333;
 }
 
-.project-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px;
-}
-
-.project-item {
-  padding: 10px 12px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.2s;
-  font-size: 14px;
-}
-
-.project-item:hover {
-  background: #f5f7fa;
-}
-
-.project-item.active {
-  background: #ecf5ff;
+.app-logo {
+  font-size: 18px;
+  font-weight: bold;
   color: #409eff;
+}
+
+.app-name {
+  font-size: 14px;
+  color: #fff;
+}
+
+.menu-nav {
+  flex: 1;
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 8px;
+  cursor: pointer;
+  color: #8c8c8c;
+  transition: all 0.2s;
+  border-radius: 8px;
+  margin: 0 8px;
+}
+
+.menu-item:hover {
+  color: #fff;
+  background: #2a2a2a;
+}
+
+.menu-item.active {
+  color: #409eff;
+  background: #1a3a5c;
+}
+
+.menu-label {
+  font-size: 11px;
+  margin-top: 4px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.sidebar-footer {
+  padding: 12px 0;
+  border-top: 1px solid #333;
 }
 
 .main-area {
@@ -675,5 +799,9 @@ async function handleMaximize() {
   align-items: center;
   justify-content: center;
   color: #999;
+}
+
+.settings-content {
+  padding: 20px;
 }
 </style>
