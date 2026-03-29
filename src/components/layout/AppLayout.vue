@@ -27,71 +27,107 @@
     <div class="app-body">
       <div class="sidebar">
         <div class="sidebar-header">
-          <span>接口列表</span>
-          <el-button size="small" type="primary" @click="showCreateApi = true">新建</el-button>
+          <span>项目列表</span>
         </div>
-        <div class="api-list">
+        <div class="project-list">
           <div
-            v-for="api in apiStore.apis"
-            :key="api.id"
-            class="api-item"
-            :class="{ active: currentApi?.id === api.id }"
-            @click="selectApi(api)"
+            v-for="project in projectStore.projects"
+            :key="project.id"
+            class="project-item"
+            :class="{ active: currentProject?.id === project.id }"
+            @click="selectProject(project)"
           >
-            <el-tag :color="getMethodColor(api.method)" size="small">{{ api.method }}</el-tag>
-            <span class="api-name">{{ api.name }}</span>
+            <span class="project-name">{{ project.name }}</span>
           </div>
-          <div v-if="apiStore.apis.length === 0" class="empty-tip">
-            暂无接口，请新建
+          <div v-if="projectStore.projects.length === 0" class="empty-tip">
+            暂无项目
           </div>
         </div>
       </div>
 
-      <div class="main-content">
-        <div v-if="currentApi" class="api-detail">
-          <div class="detail-header">
-            <h3>{{ currentApi.name }}</h3>
-            <div class="detail-actions">
-              <el-button @click="editApi">编辑</el-button>
-              <el-button type="danger" @click="deleteApi">删除</el-button>
+      <div class="main-area">
+        <div class="content-left">
+          <div class="content-header">
+            <span>接口列表</span>
+            <el-button size="small" type="primary" @click="showCreateApi = true" :disabled="!currentProject">新建</el-button>
+          </div>
+          <div class="api-list">
+            <div
+              v-for="api in apiStore.apis"
+              :key="api.id"
+              class="api-item"
+              :class="{ active: currentApi?.id === api.id }"
+              @click="selectApi(api)"
+            >
+              <el-tag :color="getMethodColor(api.method)" size="small">{{ api.method }}</el-tag>
+              <span class="api-name">{{ api.name }}</span>
+            </div>
+            <div v-if="apiStore.apis.length === 0 && currentProject" class="empty-tip">
+              暂无接口
+            </div>
+            <div v-if="!currentProject" class="empty-tip">
+              请先选择项目
             </div>
           </div>
-          <el-tabs>
-            <el-tab-pane label="基本信息">
-              <div class="info-grid">
-                <div class="info-item">
-                  <label>方法</label>
-                  <el-tag :color="getMethodColor(currentApi.method)">{{ currentApi.method }}</el-tag>
-                </div>
-                <div class="info-item">
-                  <label>路径</label>
-                  <span>{{ currentApi.path }}</span>
-                </div>
-                <div class="info-item">
-                  <label>描述</label>
-                  <span>{{ currentApi.description || '-' }}</span>
-                </div>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="Headers">
-              <JsonEditor v-model="currentApi.requestHeaders" readonly />
-            </el-tab-pane>
-            <el-tab-pane label="Params">
-              <JsonEditor v-model="currentApi.requestParams" readonly />
-            </el-tab-pane>
-            <el-tab-pane label="Body">
-              <JsonEditor v-model="currentApi.requestBody" readonly />
-            </el-tab-pane>
-            <el-tab-pane label="成功响应">
-              <JsonEditor v-model="currentApi.responseSuccess" readonly />
-            </el-tab-pane>
-            <el-tab-pane label="错误响应">
-              <JsonEditor v-model="currentApi.responseError" readonly />
-            </el-tab-pane>
-          </el-tabs>
         </div>
-        <div v-else class="empty-detail">
-          <p>选择左侧接口查看详情</p>
+
+        <div class="content-right">
+          <template v-if="currentApi">
+            <div class="detail-header">
+              <div class="detail-title">
+                <el-tag :color="getMethodColor(currentApi.method)">{{ currentApi.method }}</el-tag>
+                <h3>{{ currentApi.name }}</h3>
+              </div>
+              <div class="detail-actions">
+                <el-button @click="editApi">编辑</el-button>
+                <el-button type="danger" @click="deleteApi">删除</el-button>
+              </div>
+            </div>
+            <el-tabs v-model="activeTab" class="detail-tabs">
+              <el-tab-pane label="基本信息" name="basic">
+                <div class="tab-content">
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <label>路径</label>
+                      <span>{{ currentApi.path }}</span>
+                    </div>
+                    <div class="info-item">
+                      <label>描述</label>
+                      <span>{{ currentApi.description || '-' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="Headers" name="headers">
+                <div class="tab-content">
+                  <JsonEditor v-model="currentApi.requestHeaders" readonly />
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="Params" name="params">
+                <div class="tab-content">
+                  <JsonEditor v-model="currentApi.requestParams" readonly />
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="Body" name="body">
+                <div class="tab-content">
+                  <JsonEditor v-model="currentApi.requestBody" readonly />
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="成功响应" name="success">
+                <div class="tab-content">
+                  <JsonEditor v-model="currentApi.responseSuccess" readonly />
+                </div>
+              </el-tab-pane>
+              <el-tab-pane label="错误响应" name="error">
+                <div class="tab-content">
+                  <JsonEditor v-model="currentApi.responseError" readonly />
+                </div>
+              </el-tab-pane>
+            </el-tabs>
+          </template>
+          <div v-else class="empty-detail">
+            <p>选择左侧接口查看详情</p>
+          </div>
         </div>
       </div>
     </div>
@@ -178,6 +214,8 @@ const isMac = computed(() => {
 const currentProject = computed(() => projectStore.currentProject);
 const currentApi = computed(() => apiStore.currentApi);
 
+const activeTab = ref('basic');
+
 const showCreateProject = ref(false);
 const newProjectName = ref('');
 const newProjectDesc = ref('');
@@ -208,6 +246,7 @@ async function selectProject(project: Project) {
   projectStore.setCurrentProject(project);
   await apiStore.fetchApis(project.id);
   apiStore.setCurrentApi(null);
+  activeTab.value = 'basic';
 }
 
 async function closeProject(id: number) {
@@ -249,6 +288,7 @@ async function createProject() {
 
 function selectApi(api: Api) {
   apiStore.setCurrentApi(api);
+  activeTab.value = 'basic';
 }
 
 async function createApi() {
@@ -347,9 +387,7 @@ async function handleMaximize() {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f5f7fa;
-  border-radius: 10px;
-  overflow: hidden;
+  background: #f0f2f5;
 }
 
 .titlebar {
@@ -360,6 +398,7 @@ async function handleMaximize() {
   align-items: center;
   padding: 0 10px;
   user-select: none;
+  flex-shrink: 0;
 }
 
 .traffic-lights {
@@ -412,7 +451,7 @@ async function handleMaximize() {
 }
 
 .tab-item.active {
-  background: #f5f7fa;
+  background: #f0f2f5;
 }
 
 .tab-name {
@@ -459,20 +498,67 @@ async function handleMaximize() {
 }
 
 .sidebar {
+  width: 200px;
+  background: #fff;
+  border-right: 1px solid #e6e6e6;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.sidebar-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e6e6e6;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.project-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.project-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s;
+  font-size: 14px;
+}
+
+.project-item:hover {
+  background: #f5f7fa;
+}
+
+.project-item.active {
+  background: #ecf5ff;
+  color: #409eff;
+}
+
+.main-area {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.content-left {
   width: 280px;
   background: #fff;
   border-right: 1px solid #e6e6e6;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 
-.sidebar-header {
+.content-header {
   padding: 12px 16px;
   border-bottom: 1px solid #e6e6e6;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-weight: 500;
+  font-size: 14px;
 }
 
 .api-list {
@@ -507,26 +593,12 @@ async function handleMaximize() {
   font-size: 14px;
 }
 
-.empty-tip {
-  text-align: center;
-  color: #999;
-  padding: 20px;
-  font-size: 14px;
-}
-
-.main-content {
+.content-right {
   flex: 1;
-  margin: 16px;
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-.api-detail {
-  height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .detail-header {
@@ -537,7 +609,13 @@ async function handleMaximize() {
   align-items: center;
 }
 
-.detail-header h3 {
+.detail-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-title h3 {
   margin: 0;
   font-size: 18px;
 }
@@ -547,9 +625,19 @@ async function handleMaximize() {
   gap: 8px;
 }
 
-.api-detail :deep(.el-tabs__content) {
+.detail-tabs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.detail-tabs :deep(.el-tabs__content) {
   flex: 1;
   overflow: auto;
+}
+
+.tab-content {
   padding: 16px 20px;
 }
 
@@ -574,8 +662,15 @@ async function handleMaximize() {
   font-size: 14px;
 }
 
+.empty-tip {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  font-size: 14px;
+}
+
 .empty-detail {
-  height: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
