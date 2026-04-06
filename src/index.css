@@ -44,13 +44,27 @@ a {
 
 #root {
   isolation: isolate;
+  min-width: 100vw;
+  min-height: 100vh;
 }
 
-.page-screen {
+.app-page {
   min-width: 100vw;
   min-height: 100vh;
   width: 100%;
   box-sizing: border-box;
+  padding: 24px;
+  overflow: hidden;
+  display: flex;
+}
+
+.app-page__content {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .app-surface {

@@ -1,14 +1,25 @@
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Button, Space, Typography } from "antd";
+import { ArrowLeftOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { Button, Space, Tooltip, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
+import type { ReactNode } from "react";
 
 type PageHeaderProps = {
   title: string;
-  description: string;
+  description?: string;
   showBack?: boolean;
+  backText?: string;
+  backTo?: string;
+  actions?: ReactNode;
 };
 
-function PageHeader({ title, description, showBack = true }: PageHeaderProps) {
+function PageHeader({
+  title,
+  description,
+  showBack = true,
+  backText = "返回主页",
+  backTo = "/",
+  actions,
+}: PageHeaderProps) {
   const navigate = useNavigate();
 
   return (
@@ -19,21 +30,30 @@ function PageHeader({ title, description, showBack = true }: PageHeaderProps) {
             type="text"
             icon={<ArrowLeftOutlined />}
             className="!px-0 !text-[color:var(--app-text-primary)]"
-            onClick={() => navigate("/")}
+            onClick={() => navigate(backTo)}
           >
-            返回主页
+            {backText}
           </Button>
         ) : null}
 
-        <div>
-          <Typography.Title level={2} className="!mb-2 !mt-0 !text-[color:var(--app-text-primary)]">
+        <div className="flex items-start gap-3">
+          <Typography.Text className="!text-base !font-normal !leading-8 !text-[color:var(--app-text-primary)]">
             {title}
-          </Typography.Title>
-          <Typography.Paragraph className="!mb-0 !max-w-3xl !text-base !text-[color:var(--app-text-secondary)]">
-            {description}
-          </Typography.Paragraph>
+          </Typography.Text>
+          {description ? (
+            <Tooltip title={description} placement="bottomLeft">
+              <Button
+                type="text"
+                icon={<InfoCircleOutlined />}
+                aria-label={typeof description === "string" ? description : "页面说明"}
+                className="!mt-0.5 !px-0 !text-[color:var(--app-text-tertiary)]"
+              />
+            </Tooltip>
+          ) : null}
         </div>
       </Space>
+
+      {actions ? <div className="flex flex-wrap items-center gap-3">{actions}</div> : null}
     </div>
   );
 }

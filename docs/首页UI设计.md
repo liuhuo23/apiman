@@ -38,6 +38,9 @@ parent: 基本架构说明
 1. 页面标题。
 2. 简短说明文字。
 3. 当前项目数量或状态提示。
+4. 创建项目、清空选择等高频操作按钮。
+
+顶部标题区建议通过统一的 `PageHeader` 组件渲染，页面外层使用 `Page` 容器，确保首页即使内容为空也会占满整个窗口。
 
 ### 2.2 工具区
 
@@ -164,13 +167,14 @@ Card 内部建议采用以下层级：
 首页建议拆分为以下组件：
 
 1. `HomePage`：页面容器。
-2. `ProjectToolbar`：顶部工具区。
-3. `ProjectGrid`：项目列表容器。
-4. `ProjectCard`：单个项目卡片。
-5. `CreateProjectModal`：创建项目弹窗。
-6. `ImportMethodSwitcher`：导入方式切换。
-7. `DeleteConfirmDialog`：删除确认弹窗。
-8. `BatchActionBar`：批量操作条。
+2. `Page`：通用页面容器，负责整页撑满窗口。
+3. `PageHeader`：页面标题区，负责标题、说明和头部操作。
+4. `ProjectGrid`：项目列表容器。
+5. `ProjectCard`：单个项目卡片。
+6. `CreateProjectModal`：创建项目弹窗。
+7. `ImportMethodSwitcher`：导入方式切换。
+8. `DeleteConfirmDialog`：删除确认弹窗。
+9. `BatchActionBar`：批量操作条。
 
 ## 8. 视觉规范
 
