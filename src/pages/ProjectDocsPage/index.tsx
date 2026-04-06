@@ -20,7 +20,7 @@ function ProjectDocsPage() {
         <Button icon={<FileTextOutlined />}>预留文档动作</Button>
       </div>
 
-      <Card className="app-shell-muted border-0" styles={{ body: { padding: 20 } }}>
+      <Card className="app-surface-muted border-0" styles={{ body: { padding: 20 } }}>
         <Typography.Title level={5} className="!mb-2 !mt-0 !text-[color:var(--app-text-primary)]">
           文档结构
         </Typography.Title>
@@ -31,7 +31,7 @@ function ProjectDocsPage() {
 
       <Divider className="!my-0 !border-[color:var(--app-border-subtle)]" />
 
-      <Card className="app-shell-surface border-0" styles={{ body: { padding: 20 } }}>
+      <Card className="app-surface border-0" styles={{ body: { padding: 20 } }}>
         <Typography.Title level={5} className="!mb-3 !mt-0 !text-[color:var(--app-text-primary)]">
           文档内容区域
         </Typography.Title>

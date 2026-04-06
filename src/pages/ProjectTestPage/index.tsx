@@ -24,7 +24,7 @@ function ProjectTestPage() {
 
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={12}>
-          <Card className="app-shell-surface border-0" styles={{ body: { padding: 20 } }}>
+          <Card className="app-surface border-0" styles={{ body: { padding: 20 } }}>
             <Typography.Title level={5} className="!mb-2 !mt-0 !text-[color:var(--app-text-primary)]">
               请求配置
             </Typography.Title>
@@ -35,7 +35,7 @@ function ProjectTestPage() {
         </Col>
 
         <Col xs={24} lg={12}>
-          <Card className="app-shell-surface border-0" styles={{ body: { padding: 20 } }}>
+          <Card className="app-surface border-0" styles={{ body: { padding: 20 } }}>
             <Typography.Title level={5} className="!mb-2 !mt-0 !text-[color:var(--app-text-primary)]">
               响应结果
             </Typography.Title>

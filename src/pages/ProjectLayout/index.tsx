@@ -25,7 +25,7 @@ function ProjectLayout() {
 
   return (
     <div className="grid min-h-0 gap-6 xl:grid-cols-[320px_1fr]">
-      <Card className="app-shell-surface border-0" styles={{ body: { padding: 20 } }}>
+      <Card className="app-surface border-0" styles={{ body: { padding: 20 } }}>
         <Space direction="vertical" size={16} className="w-full">
           <div>
             <Tag color="blue" className="!m-0 !rounded-full !border-0 !px-3 !py-1">
@@ -86,7 +86,7 @@ function ProjectLayout() {
         </Space>
       </Card>
 
-      <Card className="app-shell-surface min-w-0 border-0" styles={{ body: { padding: 20 } }}>
+      <Card className="app-surface min-w-0 border-0" styles={{ body: { padding: 20 } }}>
         <Outlet />
       </Card>
     </div>

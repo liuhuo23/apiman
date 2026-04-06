@@ -46,21 +46,21 @@ a {
   isolation: isolate;
 }
 
-.app-shell-surface {
+.app-surface {
   border: 1px solid var(--app-border-subtle);
   background: var(--app-bg-surface);
   box-shadow: var(--app-shadow-md);
   backdrop-filter: blur(18px);
 }
 
-.app-shell-elevated {
+.app-surface-elevated {
   border: 1px solid var(--app-border-subtle);
   background: var(--app-bg-elevated);
   box-shadow: var(--app-shadow-lg);
   backdrop-filter: blur(20px);
 }
 
-.app-shell-muted {
+.app-surface-muted {
   border: 1px solid var(--app-border-subtle);
   background: var(--app-bg-muted);
 }
