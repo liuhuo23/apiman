@@ -1,16 +1,25 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { ConfigProvider, theme } from "antd";
+import "antd/dist/reset.css";
+import "./index.css";
 import App from "./App";
 
-// Ant Design reset and ConfigProvider theme integration
-import 'antd/dist/reset.css';
-import ThemeProvider from './styles/theme-provider';
-import './styles/antd-vars.css';
-
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ThemeProvider>
+    <ConfigProvider
+      theme={{
+        algorithm: theme.darkAlgorithm,
+        token: {
+          colorPrimary: "#38bdf8",
+          borderRadius: 14,
+          fontFamily:
+            '"Avenir Next", "Segoe UI Variable", "Segoe UI", "PingFang SC", "Hiragino Sans", "Microsoft YaHei", sans-serif',
+        },
+      }}
+    >
       <App />
-    </ThemeProvider>
+    </ConfigProvider>
   </React.StrictMode>,
 );
+

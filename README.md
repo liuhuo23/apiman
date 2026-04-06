@@ -1,7 +1,27 @@
-# Tauri + React + Typescript
+# Apiman
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+Tauri 2.0 desktop app scaffold with:
 
-## Recommended IDE Setup
+- React + TypeScript + TSX
+- Vite
+- Tailwind CSS
+- Ant Design
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## Start
+
+```bash
+npm install
+npm run tauri:dev
+```
+
+## Build
+
+```bash
+npm run tauri:build
+```
+
+## Structure
+
+- `src/` frontend code
+- `src-tauri/` Rust backend and Tauri configuration
+
