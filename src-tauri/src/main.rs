@@ -1,4 +1,3 @@
 fn main() {
-  apiman_lib::run();
+    apiman_lib::run();
 }
-
